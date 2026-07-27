@@ -1,0 +1,15 @@
+# Virtual Environment
+venv/
+ENV/
+env/
+
+# Environment Variables (SANGAT IMPORTANT: Jangan Upload Password)
+.env
+
+# Python Cache
+__pycache__/
+*.py[cod]
+
+# IDE
+.vscode/
+.idea/
