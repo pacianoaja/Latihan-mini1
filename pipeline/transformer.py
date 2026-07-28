@@ -1,5 +1,7 @@
 import re
 from datetime import datetime, timezone
+from .logger import logger
+
 
 class DataTransformer:
     
@@ -15,6 +17,7 @@ class DataTransformer:
         try:
             return float(cleaned)
         except ValueError:
+            logger.warning(f"Gagal mengonversi harga mentah: '{raw_price}'. Nilai default 0.0 digunakan.")
             return 0.0
 
     @staticmethod
@@ -46,6 +49,7 @@ class DataTransformer:
         try:
             return float(cleaned)
         except ValueError:
+            logger.warning(f"Gagal mengonversi rating mentah: '{raw_rating}'. Nilai default 0.0 digunakan.")
             return 0.0
 
     @classmethod
@@ -61,3 +65,27 @@ class DataTransformer:
             "rating": cls.parse_rating(raw_data.get("rating", "")),
             "last_updated": datetime.now(timezone.utc)
         }
+
+    
+    @classmethod
+    def transform_batch(cls, raw_products: list[dict]) -> list[dict]:
+        """
+        Memproses list data mentah dari Extractor menjadi list data siap simpan ke DB.
+        """
+        if not raw_products:
+            logger.info("Tidak ada data mentah untuk ditransformasi.")
+            return []
+
+        logger.info(f"Memulai transformasi data untuk {len(raw_products)} record...")
+        transformed_products = []
+
+        for idx, item in enumerate(raw_products, start=1):
+            try:
+                clean_item = cls.transform_product(item)
+                transformed_products.append(clean_item)
+            except Exception as e:
+                logger.warning(f"Gagal mentransformasi item ke-{idx} (SKU: {item.get('sku')}): {e}. Item dilewati.")
+                continue
+
+        logger.info(f"Transformasi selesai. Total data valid siap muat: {len(transformed_products)}")
+        return transformed_products

@@ -1,4 +1,5 @@
 from playwright.sync_api import sync_playwright
+from .logger import logger
 
 class PlaywrightExtractor:
     
@@ -30,7 +31,7 @@ class PlaywrightExtractor:
             page.route("**/*", self._block_aggressively)
             
             try:
-                print(f"[INFO] Mengakses target: {self.base_url}")
+                logger.info(f"Mengakses target URL: {self.base_url}")
                 page.goto(self.base_url, timeout=30000)
                 
                 # Mengambil semua elemen kartu produk
@@ -72,12 +73,15 @@ class PlaywrightExtractor:
                         })
                         
                     except Exception as e:
-                        print(f"[WARN] Gagal mengekstrak elemen ke-{idx}: {e}")
-                        continue  # Melanjutkan ke produk berikutnya tanpa menghentikan loop
+                        logger.warning(f"Gagal mengekstrak kartu produk ke-{idx}: {e}. Lanjut ke produk berikutnya.")
+                        continue  # Melanjutkan ke produk berikutnya  # Melanjutkan ke produk berikutnya tanpa menghentikan loop
                         
             except Exception as e:
-                print(f"[ERROR] Kegagalan navigasi halaman: {e}")
+                logger.error(f"Kegagalan navigasi atau memuat halaman {self.base_url}: {e}", exc_info=True)
+                raise e  # Lempar error ke main.py agar pipeline tahu ekstrator gagal
             finally:
                 browser.close()
+                logger.debug("Browser Playwright berhasil ditutup.")
                 
+        logger.info(f"Ekstraksi selesai. Berhasil mengambil {len(raw_products)} data mentah.")
         return raw_products

@@ -1,5 +1,7 @@
 import psycopg2
 from config.database import get_db_connection
+from .logger import logger
+
 
 class PostgresLoader:
     
@@ -12,7 +14,7 @@ class PostgresLoader:
         Mengembalikan jumlah baris yang berhasil diproses.
         """
         if not products:
-            print("[INFO] Tidak ada data untuk dimuat.")
+            logger.info("Tidak ada data untuk dimuat.")
             return 0
 
         # Query UPSERT PostgreSQL
@@ -43,15 +45,23 @@ class PostgresLoader:
             # Commit transaksi jika seluruh batch berhasil
             conn.commit()
             cursor.close()
-            print(f"[SUCCESS] Berhasil memproses {len(products)} record ke database.")
+            logger.info(f"Berhasil memproses {len(products)} record (UPSERT) ke database. Total baris diubah: {rows_affected}")
             
+        except psycopg2.DatabaseError as db_err:
+            if conn:
+                conn.rollback()  # Batalkan transaksi jika terjadi error database
+            logger.error(f"Transaksi PostgreSQL gagal & di-rollback: {db_err}", exc_info=True)
+            raise db_err
+
         except Exception as e:
             if conn:
-                conn.rollback()  # Batalkan transaksi jika terjadi error
-            print(f"[ERROR] Transaksi database gagal: {e}")
+                conn.rollback()
+            logger.critical(f"Error tidak terduga pada layer Loader: {e}", exc_info=True)
             raise e
+        
         finally:
             if conn:
                 conn.close()
+                logger.debug("Koneksi database PostgreSQL berhasil ditutup.")
                 
         return rows_affected
