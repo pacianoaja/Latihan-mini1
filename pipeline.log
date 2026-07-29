@@ -15,3 +15,38 @@
 2026-07-28 23:03:19 [DEBUG] (loader.py:65) - Koneksi database PostgreSQL berhasil ditutup.
 2026-07-28 23:03:19 [INFO] (main.py:62) - [LOAD] Berhasil UPSERT 20 record ke database.
 2026-07-28 23:03:19 [INFO] (main.py:67) - Pipeline selesai dieksekusi tanpa error.
+2026-07-29 23:03:44 [INFO] (scheduler.py:32) - ==================================================
+2026-07-29 23:03:44 [INFO] (scheduler.py:33) -  Layanan Scheduler ETL Berhasil Diaktifkan!
+2026-07-29 23:03:44 [INFO] (scheduler.py:34) -  Jadwal Eksekusi : Setiap 1 menit
+2026-07-29 23:03:44 [INFO] (scheduler.py:35) -  Tekan Ctrl+C di terminal untuk menghentikan scheduler.
+2026-07-29 23:03:44 [INFO] (scheduler.py:36) - ==================================================
+2026-07-29 23:03:44 [INFO] (scheduler.py:20) -  Scheduler memicu eksekusi ETL otomatis...
+2026-07-29 23:03:44 [INFO] (main.py:38) - ==================================================
+2026-07-29 23:03:44 [INFO] (main.py:39) - Memulai Pipeline E-Commerce Competitive Intelligence...
+2026-07-29 23:03:44 [INFO] (main.py:40) - ==================================================
+2026-07-29 23:04:04 [INFO] (extractor.py:34) - Mengakses target URL: http://books.toscrape.com/
+2026-07-29 23:04:10 [DEBUG] (extractor.py:84) - Browser Playwright berhasil ditutup.
+2026-07-29 23:04:10 [INFO] (extractor.py:86) - Ekstraksi selesai. Berhasil mengambil 20 data mentah.
+2026-07-29 23:04:10 [INFO] (main.py:50) - [EXTRACT] Terambil 20 raw record.
+2026-07-29 23:04:10 [INFO] (main.py:57) - [TRANSFORM] Berhasil membersihkan 20 record.
+2026-07-29 23:04:10 [INFO] (loader.py:48) - Berhasil memproses 20 record (UPSERT) ke database. Total baris diubah: 20
+2026-07-29 23:04:10 [DEBUG] (loader.py:65) - Koneksi database PostgreSQL berhasil ditutup.
+2026-07-29 23:04:10 [INFO] (main.py:62) - [LOAD] Berhasil UPSERT 20 record ke database.
+2026-07-29 23:04:10 [INFO] (main.py:67) - Pipeline selesai dieksekusi tanpa error.
+2026-07-29 23:05:10 [INFO] (scheduler.py:20) -  Scheduler memicu eksekusi ETL otomatis...
+2026-07-29 23:05:10 [INFO] (main.py:38) - ==================================================
+2026-07-29 23:05:10 [INFO] (main.py:39) - Memulai Pipeline E-Commerce Competitive Intelligence...
+2026-07-29 23:05:10 [INFO] (main.py:40) - ==================================================
+2026-07-29 23:05:12 [INFO] (extractor.py:34) - Mengakses target URL: http://books.toscrape.com/
+2026-07-29 23:05:15 [DEBUG] (extractor.py:84) - Browser Playwright berhasil ditutup.
+2026-07-29 23:05:15 [INFO] (extractor.py:86) - Ekstraksi selesai. Berhasil mengambil 20 data mentah.
+2026-07-29 23:05:15 [INFO] (main.py:50) - [EXTRACT] Terambil 20 raw record.
+2026-07-29 23:05:15 [INFO] (main.py:57) - [TRANSFORM] Berhasil membersihkan 20 record.
+2026-07-29 23:05:15 [INFO] (loader.py:48) - Berhasil memproses 20 record (UPSERT) ke database. Total baris diubah: 20
+2026-07-29 23:05:15 [DEBUG] (loader.py:65) - Koneksi database PostgreSQL berhasil ditutup.
+2026-07-29 23:05:15 [INFO] (main.py:62) - [LOAD] Berhasil UPSERT 20 record ke database.
+2026-07-29 23:05:15 [INFO] (main.py:67) - Pipeline selesai dieksekusi tanpa error.
+2026-07-29 23:05:19 [WARNING] (scheduler.py:52) - 
+[INTERRUPT] Sinyal penghentian (Ctrl+C) diterima oleh sistem!
+2026-07-29 23:05:19 [INFO] (scheduler.py:53) - Sedang membersihkan alokasi memori dan menghentikan Daemon Scheduler...
+2026-07-29 23:05:19 [INFO] (scheduler.py:54) - Layanan Scheduler ETL berhasil dihentikan secara aman (Graceful Exit).

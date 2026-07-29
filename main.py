@@ -34,7 +34,7 @@ def run_validation_query():
     except Exception as e:
         print(f"[ERROR] Gagal menjalankan query validasi: {e}")
 
-def main():
+def running():
     logger.info("==================================================")
     logger.info("Memulai Pipeline E-Commerce Competitive Intelligence...")
     logger.info("==================================================")
@@ -71,4 +71,4 @@ def main():
         logger.critical(f"Pipeline berhenti secara paksa karena terjadi kesalahan fatal: {e}", exc_info=True)
 
 if __name__ == "__main__":
-    main()
+    running()
