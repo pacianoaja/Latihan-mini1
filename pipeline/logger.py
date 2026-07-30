@@ -1,8 +1,16 @@
 # logger.py
 import logging
 import sys
+import os
+from dotenv import load_dotenv
 
-def setup_logger(name: str = "etl_pipeline", log_file: str = "pipeline.log") -> logging.Logger:
+load_dotenv()
+def setup_logger(name: str = "etl_pipeline", log_file: str = None) -> logging.Logger:
+    # Jika log_file tidak dimasukkan saat dipanggil, ambil nilainya dari .env
+    if log_file is None:
+        log_file = os.getenv("LOG_FILE_NAME", "pipeline.log")
+
+
     """
     Menyediakan logger tersentralisasi dengan dua output:
     1. Terminal (StreamHandler) -> Hanya menampilkan log penting (INFO ke atas)

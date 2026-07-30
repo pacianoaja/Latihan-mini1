@@ -1,15 +1,19 @@
+import os
+from dotenv import load_dotenv
 import time
 import sys
 import schedule
 from pipeline.logger import logger
 from main import running
 
+# LIHAT ENV
+load_dotenv()
 # ==========================================
 # KONFIGURASI PENJADWALAN (PARAMETERISASI)
 # ==========================================
 # Untuk keperluan pengujian/testing, gunakan interval menit/detik.
 # Di lingkungan produksi, nilai ini bisa diubah sesuai kebutuhan bisnis.
-RUN_INTERVAL_MINUTES = 1  
+INTERVAL_MINUTES = int(os.getenv("SCHEDULER_INTERVAL_MINUTES", 3)) 
 
 
 def execute_job_wrapper():
@@ -31,7 +35,7 @@ def start_scheduler():
     """
     logger.info("==================================================")
     logger.info(f" Layanan Scheduler ETL Berhasil Diaktifkan!")
-    logger.info(f" Jadwal Eksekusi : Setiap {RUN_INTERVAL_MINUTES} menit")
+    logger.info(f" Jadwal Eksekusi : Setiap {INTERVAL_MINUTES} menit")
     logger.info(f" Tekan Ctrl+C di terminal untuk menghentikan scheduler.")
     logger.info("==================================================")
 
@@ -39,7 +43,7 @@ def start_scheduler():
     execute_job_wrapper()
 
     # 2. Registrasi Task ke Library 'schedule'
-    schedule.every(RUN_INTERVAL_MINUTES).minutes.do(execute_job_wrapper)
+    schedule.every(INTERVAL_MINUTES).minutes.do(execute_job_wrapper)
 
     # 3. Continuous Event Loop dengan Graceful Shutdown Handling
     try:

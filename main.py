@@ -1,3 +1,5 @@
+import os
+from dotenv import load_dotenv
 from pipeline.extractor import PlaywrightExtractor
 from pipeline.transformer import DataTransformer
 from pipeline.loader import PostgresLoader
@@ -42,7 +44,7 @@ def running():
     
     try :
         # Target URL latihan
-        TARGET_URL = "http://books.toscrape.com/"
+        TARGET_URL = os.getenv("TARGET_URL")
         
         # 1. Extraction Layer
         extractor = PlaywrightExtractor(base_url=TARGET_URL)
