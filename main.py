@@ -42,6 +42,17 @@ def running():
     logger.info("Memulai Pipeline E-Commerce Competitive Intelligence...")
     logger.info("==================================================")
     start_time = time.perf_counter()
+    loader = PostgresLoader()
+    loader.create_tables_if_not_exists()
+
+    # Inisialisasi variabel & loader di awal
+
+    status = "FAILED"
+    total_extracted = 0
+    total_cleaned = 0
+    total_upserted = 0
+    data_loss = 0
+    data_loss_rate = 0.0
     
     try :
         # Target URL latihan

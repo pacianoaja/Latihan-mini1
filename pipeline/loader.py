@@ -98,3 +98,44 @@ class PostgresLoader:
         finally:
             if conn:
                 conn.close()
+
+
+    def create_tables_if_not_exists(self):
+        """
+        Membuat tabel dim_products dan etl_execution_logs secara otomatis jika belum ada.
+        """
+        ddl_query = """
+        CREATE TABLE IF NOT EXISTS dim_products (
+            sku VARCHAR(255) PRIMARY KEY,
+            title TEXT NOT NULL,
+            price NUMERIC(10,2) NOT NULL,
+            stock_status BOOLEAN NOT NULL,
+            rating INT NOT NULL,
+            last_updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+        );
+
+        CREATE TABLE IF NOT EXISTS etl_execution_logs (
+            id SERIAL PRIMARY KEY,
+            executed_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+            status VARCHAR(20) NOT NULL,
+            total_extracted INT NOT NULL,
+            total_upserted INT NOT NULL,
+            data_loss_rate NUMERIC(5,2) NOT NULL,
+            duration_seconds NUMERIC(8,2) NOT NULL
+        );
+        """
+        conn = None
+        try:
+            conn = get_db_connection()
+            cursor = conn.cursor()
+            cursor.execute(ddl_query)
+            conn.commit()
+            cursor.close()
+            logger.info("Tabel dim_products & etl_execution_logs dipastikan sudah siap.")
+        except Exception as e:
+            if conn:
+                conn.rollback()
+            logger.error(f"Gagal membuat tabel database: {e}", exc_info=True)
+        finally:
+            if conn:
+                conn.close()
