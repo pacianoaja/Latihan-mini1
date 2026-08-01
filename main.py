@@ -83,6 +83,14 @@ def running():
     # buat nyari waktu eksekusi 
 
     duration_seconds = end_time - start_time
+
+    loader.save_execution_log(
+        status="SUCCESS",
+        total_extracted=total_extracted,
+        total_upserted=total_upserted,
+        data_loss_rate=data_loss_rate,
+        duration_seconds=duration_seconds
+    )
     summary_log = f"""
 ==================================================
              PIPELINE EXECUTION SUMMARY           

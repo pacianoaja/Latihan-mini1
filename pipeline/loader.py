@@ -65,3 +65,36 @@ class PostgresLoader:
                 logger.debug("Koneksi database PostgreSQL berhasil ditutup.")
                 
         return rows_affected
+    def save_execution_log(self, status: str, total_extracted: int, total_upserted: int, data_loss_rate: float, duration_seconds: float):
+        """
+        Menyimpan ringkasan eksekusi ETL ke dalam tabel etl_execution_logs.
+        """
+        insert_query = """
+            INSERT INTO etl_execution_logs (status, total_extracted, total_upserted, data_loss_rate, duration_seconds)
+            VALUES (%(status)s, %(total_extracted)s, %(total_upserted)s, %(data_loss_rate)s, %(duration_seconds)s);
+        """
+        conn = None
+        try:
+            conn = get_db_connection()
+            cursor = conn.cursor()
+            
+            cursor.execute(insert_query, {
+                "status": status,
+                "total_extracted": total_extracted,
+                "total_upserted": total_upserted,
+                "data_loss_rate": data_loss_rate,
+                "duration_seconds": duration_seconds
+            })
+            
+            conn.commit()
+            cursor.close()
+            logger.info("Audit log eksekusi berhasil disimpan ke tabel etl_execution_logs.")
+            
+        except Exception as e:
+            if conn:
+                conn.rollback()
+            logger.error(f"Gagal menyimpan audit log eksekusi: {e}", exc_info=True)
+            
+        finally:
+            if conn:
+                conn.close()
