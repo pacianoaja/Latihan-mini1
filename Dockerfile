@@ -39,4 +39,4 @@ RUN python -m playwright install chromium
 COPY . .
 
 # 8. Jalankan main.py
-CMD ["python", "main.py"]
+CMD ["python", "scheduler.py"]
