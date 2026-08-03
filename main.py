@@ -5,6 +5,7 @@ from pipeline.transformer import DataTransformer
 from pipeline.loader import PostgresLoader
 from config.database import get_db_connection
 from pipeline.logger import logger
+from pipeline.validator import DataValidator, DataValidationError
 import time
 
 def run_validation_query():
@@ -71,6 +72,9 @@ def running():
             transformed_products.append(clean_data)
         logger.info(f"[TRANSFORM] Berhasil membersihkan {len(transformed_products)} record.")
         total_cleaned = len(transformed_products)
+
+        # additional buat memeriksa apkah datanya bersih
+        DataValidator.validate_batch(transformed_products)
         
         # 3. Loading Layer (PostgreSQL UPSERT)
         loader = PostgresLoader()
@@ -84,6 +88,13 @@ def running():
         data_loss_rate = (data_loss / total_extracted) * 100 if total_extracted > 0 else 0.0
         
         logger.info("Pipeline selesai dieksekusi tanpa error.")
+
+
+    except DataValidationError as e:
+        # Menangkap error khusus validasi data kotor
+        logger.error(f"[PIPELINE ABORTED] Kegagalan Kualitas Data: {e}")
+        # Re-raise error agar scheduler/wrapper tahu pipeline gagal (penting untuk Alerting nanti)
+        raise e
 
     except Exception as e:
         # Menangkap error fatal yang dilempar (raise) dari layer mana pun
