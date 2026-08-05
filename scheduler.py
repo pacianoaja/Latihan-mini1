@@ -5,6 +5,7 @@ import sys
 import schedule
 from pipeline.logger import logger
 from main import running
+from pipeline.notifier import TelegramNotifier
 
 # LIHAT ENV
 load_dotenv()
@@ -14,18 +15,24 @@ load_dotenv()
 # Untuk keperluan pengujian/testing, gunakan interval menit/detik.
 # Di lingkungan produksi, nilai ini bisa diubah sesuai kebutuhan bisnis.
 INTERVAL_MINUTES = int(os.getenv("SCHEDULER_INTERVAL_MINUTES", 3)) 
-
+notifier = TelegramNotifier()
+execution_counter = 0
 
 def execute_job_wrapper():
     """
     Wrapper pembungkus fungsi ETL dari main.py.
     Bertugas mencatat pembuka dan penutup sesi eksekusi berkala ke dalam log.
     """
+    global execution_counter
+    execution_counter += 1
+
     logger.info(" Scheduler memicu eksekusi ETL otomatis...")
+    notifier.send_notification(f"🔄 <b>[ETL RUN #{execution_counter}]</b> Memproses data...")
     try:
         running()
     except Exception as e:
         logger.error(f"Terjadi kegagalan saat mengeksekusi job terjadwal: {e}", exc_info=True)
+        notifier.send_notification(f"🚨 <b>[FAILED RUN #{execution_counter}]</b> Error: <code>{str(e)}</code>")
     
 
 

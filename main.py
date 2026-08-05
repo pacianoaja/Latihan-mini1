@@ -6,6 +6,7 @@ from pipeline.loader import PostgresLoader
 from config.database import get_db_connection
 from pipeline.logger import logger
 from pipeline.validator import DataValidator, DataValidationError
+from pipeline.notifier import TelegramNotifier
 import time
 
 def run_validation_query():
@@ -45,6 +46,7 @@ def running():
     start_time = time.perf_counter()
     loader = PostgresLoader()
     loader.create_tables_if_not_exists()
+    notifier = TelegramNotifier()
 
     # Inisialisasi variabel & loader di awal
 
@@ -88,17 +90,27 @@ def running():
         data_loss_rate = (data_loss / total_extracted) * 100 if total_extracted > 0 else 0.0
         
         logger.info("Pipeline selesai dieksekusi tanpa error.")
+        notifier.send_notification(" <b>ETL SUCCESS</b>: Pipeline berhasil dijalankan tanpa error!")
 
 
     except DataValidationError as e:
         # Menangkap error khusus validasi data kotor
         logger.error(f"[PIPELINE ABORTED] Kegagalan Kualitas Data: {e}")
+        notifier.send_notification(
+            f"⚠️ <b>DATA VALIDATION FAILED</b>\n"
+            f"<b>Detail:</b> <code>{str(e)}</code>"
+        )
         # Re-raise error agar scheduler/wrapper tahu pipeline gagal (penting untuk Alerting nanti)
         raise e
 
     except Exception as e:
         # Menangkap error fatal yang dilempar (raise) dari layer mana pun
         logger.critical(f"Pipeline berhenti secara paksa karena terjadi kesalahan fatal: {e}", exc_info=True)
+        notifier.send_notification(
+            f"🚨 <b>CRITICAL ETL ERROR</b>\n"
+            f"<b>Detail:</b> <code>{str(e)}</code>"
+        )
+        raise e
 
     end_time = time.perf_counter()
 
